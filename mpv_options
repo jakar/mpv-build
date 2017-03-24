@@ -1,0 +1,9 @@
+--prefix=/usr/local/stow/mpv
+
+--enable-zsh-comp
+
+--enable-dvdread
+--enable-dvdnav
+--enable-cdda
+--enable-libarchive
+
