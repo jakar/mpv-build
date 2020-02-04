@@ -1,6 +1,5 @@
 --prefix=/usr/local/stow/mpv
 
---enable-dvdread
 --enable-dvdnav
 --enable-cdda
 --enable-libarchive
