@@ -4,7 +4,6 @@
 
 --cpu=host
 
---enable-avisynth
 --enable-opencl
 
 --enable-libfdk-aac
@@ -16,7 +15,6 @@
 --enable-libtwolame
 --enable-libvo-amrwbenc
 --enable-libvorbis
---enable-libwavpack
 
 --enable-libtheora
 --enable-libvpx
