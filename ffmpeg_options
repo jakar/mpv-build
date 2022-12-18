@@ -23,7 +23,6 @@
 --enable-libxvid
 
 --enable-libcdio
---enable-libiec61883
 --enable-libpulse
 --enable-librtmp
 --enable-libv4l2
@@ -36,3 +35,26 @@
 --enable-libfreetype
 --enable-libfribidi
 
+--enable-libaom
+--enable-libaribb24
+--enable-libbluray
+--enable-libcodec2
+--enable-libopenmpt
+--enable-libplacebo
+--enable-librabbitmq
+--enable-librsvg
+--enable-libsmbclient
+--enable-libsnappy
+--enable-libsoxr
+--enable-libspeex
+--enable-libsvtav1
+--enable-libvidstab
+--enable-libvpl
+--enable-libwebp
+--enable-libxavs2
+--enable-libxcb
+--enable-libxml2
+--enable-libzimg
+--enable-libzmq
+--enable-libzvbi
+--enable-lv2
