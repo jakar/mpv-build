@@ -1,6 +1,6 @@
 #! /usr/bin/make -f
 
-export DEB_BUILD_MAINT_OPTIONS:=hardening=+all
+export DEB_BUILD_MAINT_OPTIONS := hardening=+all optimize=-lto
 
 # To enable parallel building:
 # You can either set DEB_BUILD_OPTIONS=paralell=<num-procs> in your build environment
@@ -11,6 +11,7 @@ ifneq (,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
 # use MFLAGS, rather than MAKEFLAGS as the latter is used by make internally
 	MFLAGS += -j$(NUMJOBS)
 	WAFFLAGS += -j$(NUMJOBS)
+	NINJAFLAGS += -j$(NUMJOBS)
 endif
 
 # make .PHONY all the targets that have name collisions with the scripts
@@ -36,7 +37,7 @@ libass_build: libass_config
 	scripts/libass-build $(MFLAGS)
 
 # depend on libass_build in case the user specified --enable-libass in ffmpeg_options
-ffmpeg_config: libass_build
+ffmpeg_config: libass_build libplacebo_build
 	scripts/ffmpeg-config \
 		--enable-gnutls \
 		--enable-libdav1d \
@@ -59,8 +60,14 @@ ffmpeg_config: libass_build
 ffmpeg_build: ffmpeg_config
 	scripts/ffmpeg-build $(MFLAGS)
 
+libplacebo_config:
+	scripts/libplacebo-config
+
+libplacebo_build: libplacebo_config
+	scripts/libplacebo-build $(NINJAFLAGS)
+
 # put the config in the right place and drop the local/ since it's package managed now
-override_dh_auto_configure: ffmpeg_build libass_build
+override_dh_auto_configure: ffmpeg_build libass_build libplacebo_build
 	scripts/mpv-config --prefix=/usr --confdir=/etc/mpv \
 		--enable-openal \
 		--enable-dvdnav \
@@ -76,7 +83,7 @@ DOCDEST=debian/mpv/usr/share/doc/mpv
 TOOLSDEST=$(DOCDEST)/TOOLS
 # call waf to install to the debian packageing dir
 override_dh_auto_install:
-	cd mpv && python waf -v install --destdir=../debian/mpv
+	cd mpv && python3 waf -v install --destdir=../debian/mpv
 
 # for manually installed dependencies
 override_dh_shlibdeps:

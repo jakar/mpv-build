@@ -39,6 +39,21 @@ statically linked with mpv when using the provided scripts, and no ffmpeg or
 libass libraries are/need to be installed. There are no required config or
 data files either.
 
+Meson Support
+=============
+
+These scripts do have support for building with mpv's meson build. They are not
+used by default. To invoke them, you must pass an additional environment variable,
+BUILDSYSTEM=meson to your commands. For example::
+
+    BUILDSYSTEM=meson ./rebuild -j4
+
+The arguments that you pass should conform to meson conventions and not the waf
+ones.
+
+**Note**: The meson scripts specifically invoke the new ``prefer_static`` built-in
+option. This requires a meson version of 0.63 or greater.
+
 Dependencies
 ============
 
@@ -46,6 +61,7 @@ Essential dependencies (incomplete list):
 
 - gcc or clang, yasm, git
 - autoconf/autotools (for libass)
+- meson, ninja (libplacebo)
 - X development headers (xlib, X extensions, vdpau, GL, Xv, ...)
 - Audio output development headers (libasound, pulseaudio)
 - fribidi, freetype, fontconfig development headers (for libass)
@@ -72,18 +88,46 @@ if the dependencies are not available.)
 You can put additional ffmpeg configure flags into ffmpeg_options. For
 example, to enable some dependencies needed for encoding::
 
-    echo --enable-libx264    >> ffmpeg_options
+    printf "%s\n" --enable-libx264    >> ffmpeg_options
 
-    echo --enable-libmp3lame >> ffmpeg_options
+    printf "%s\n" --enable-libmp3lame >> ffmpeg_options
 
-    echo --enable-libfdk-aac >> ffmpeg_options
+    printf "%s\n" --enable-libfdk-aac >> ffmpeg_options
 
 Do this in the mpv-build top-level directory (the same that contains
 the build scripts and this readme file). It must be done prior running
 ./build or ./rebuild.
 
+NAME_options files (where NAME is ffmpeg/mpv/libass/fribidi)
+============================================================
+
+These files can hold custom configure options which are passed to the
+respective configure scripts.
+
+Empty lines are ignored, and every non-empty line becomes a single verbatim
+argument (including leading and/or trailing spaces) when invoking the
+respective configure script.
+
+This means that shell quotes should *not* be placed at these files, and the
+values should not be indented.
+
+The files can hold arbitrary values, except empty values and values which
+contain newline[s].
+
+Except empty/with-newlines, any list of configure arguments, for instance::
+
+    ./configure   --thing=foo --libs="-L/bar -lbaz" -x abc +z
+
+can also be added to the file, like so::
+
+    printf "%s\n" --thing=foo --libs="-L/bar -lbaz" -x abc +z >> ffmpeg_options
+
 Instructions for Debian / Ubuntu package
 ========================================
+
+Run ``./update`` first. Note that the NAME_options files are respected - but may
+conflict with the built-in Debian build options. For best results one should
+customize the build only via the files ``debian/rules`` and ``debian/control``.
 
 To help track dependencies and installed files, there is the option to create a
 Debian package containing the mpv binary and documentation. This is considered
@@ -100,11 +144,6 @@ package::
 
     mk-build-deps -s sudo -i
 
-Debian no longer provides an unversioned "python" binary, so you need to
-create your own symlink from python3 (or python2) if this is the cae::
-
-    which python || sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 3
-
 You can now build the mpv Debian package with the following command::
 
     dpkg-buildpackage -uc -us -b -j4
@@ -119,7 +158,7 @@ where you must replace <version> with the version of mpv you just built (as
 indicated in debian/changelog) and <architecture> with your architecture.
 
 To keep your package up to date, simply repeat the above commands after running
-the `./update` script in the mpv-build root directory from time to time.
+the ``./update`` script in the mpv-build root directory from time to time.
 
 Local changes to the git repositories
 =====================================
@@ -136,12 +175,12 @@ changes in sub-repositories will break.
 Selecting release vs. master versions
 =====================================
 
-By default, mpv, ffmpeg and libass use the git master versions. These are
-bleeding edge, but should usually work fine. To get a stable (slightly stale)
-version, you can use release versions. Note that at least for mpv, releases
-are not actually maintained - releases are for Linux distributions, which are
-expected to maintain them and to backport bug fixes (which they usually fail
-to do).
+By default, mpv, ffmpeg, libplacebo and libass use the git master versions.
+These are bleeding edge, but should usually work fine. To get a stable
+(slightly stale) version, you can use release versions.
+Note that at least for mpv, releases are not actually maintained - releases
+are for Linux distributions, which are expected to maintain them and to
+backport bug fixes (which they usually fail to do).
 
 The following command can be used to delete all local changes, and to checkout
 the latest release version of mpv::
@@ -177,7 +216,7 @@ Building libmpv
 
 You can enable building libmpv by enabling the configure option::
 
-    echo --enable-libmpv-shared > mpv_options
+    printf "%s\n" --enable-libmpv-shared > mpv_options
 
 Note that this will make the mpv-build scripts also enable PIC for all used
 libraries. For this reason, be sure to run ``./clean`` before rebuilding.
@@ -187,7 +226,7 @@ The Debian packaging scripts do not currently support libmpv.
 Contact
 =======
 
-You can find us on IRC in ``#mpv`` on ``irc.freenode.net``
+You can find us on IRC in ``#mpv`` on ``irc.libera.chat``
 
 Report bugs to the `issues tracker`_ provided by GitHub to send us bug
 reports or feature requests.

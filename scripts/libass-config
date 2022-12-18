@@ -1,9 +1,16 @@
 #!/bin/sh
 set -e
 BUILD="$(pwd)"
+newline="
+"
 
-OPTIONS="$@"
+if test -f "$BUILD"/libass_options ; then
+    IFS=$newline
+    set -- $(cat "$BUILD"/libass_options) "$@"
+    unset -v IFS
+fi
 
+OPTIONS="--enable-static --disable-shared"
 if "$BUILD"/scripts/test-libmpv ; then
     OPTIONS="$OPTIONS --with-pic"
 fi
@@ -19,6 +26,6 @@ esac
 
 cd "$BUILD"/libass
 # Later libass doesn't automatically run configure with autogen.sh anymore
-./autogen.sh --prefix="$BUILD/build_libs" --libdir="$BUILD/build_libs/lib" --enable-static --disable-shared $OPTIONS
-./configure  --prefix="$BUILD/build_libs" --libdir="$BUILD/build_libs/lib" --enable-static --disable-shared $OPTIONS
+./autogen.sh --prefix="$BUILD/build_libs" --libdir="$BUILD/build_libs/lib" $OPTIONS "$@"
+./configure  --prefix="$BUILD/build_libs" --libdir="$BUILD/build_libs/lib" $OPTIONS "$@"
 
