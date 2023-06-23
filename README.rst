@@ -39,20 +39,21 @@ statically linked with mpv when using the provided scripts, and no ffmpeg or
 libass libraries are/need to be installed. There are no required config or
 data files either.
 
-Meson Support
+**Note**: If you are on debian, you may need to install meson from backports
+in order to get a non-ancient version. Alternatively, you can install it from
+PyPi.
+
+Waf Support
 =============
 
-These scripts do have support for building with mpv's meson build. They are not
-used by default. To invoke them, you must pass an additional environment variable,
-BUILDSYSTEM=meson to your commands. For example::
+These scripts do have support for building with mpv's deprecated waf build. It is
+not used by default. To invoke it, you must pass an additional environment variable,
+BUILDSYSTEM=waf to your commands. For example::
 
-    BUILDSYSTEM=meson ./rebuild -j4
+    BUILDSYSTEM=waf ./rebuild -j4
 
-The arguments that you pass should conform to meson conventions and not the waf
+The arguments that you pass should conform to waf conventions and not the meson
 ones.
-
-**Note**: The meson scripts specifically invoke the new ``prefer_static`` built-in
-option. This requires a meson version of 0.63 or greater.
 
 Dependencies
 ============
@@ -207,7 +208,7 @@ mpv configure options
 Just like ``ffmpeg_options``, the file ``mpv_options`` in the
 mpv-build top-level directory can be used to set custom mpv configure
 options prior to compiling. Like with ffmpeg_option, it expects one
-switch per line (e.g. ``--enable-something``).
+switch per line (e.g. ``-Dsomething=enabled``).
 
 But normally, you shouldn't need this.
 
@@ -216,7 +217,7 @@ Building libmpv
 
 You can enable building libmpv by enabling the configure option::
 
-    printf "%s\n" --enable-libmpv-shared > mpv_options
+    printf "%s\n" -Dlibmpv=true > mpv_options
 
 Note that this will make the mpv-build scripts also enable PIC for all used
 libraries. For this reason, be sure to run ``./clean`` before rebuilding.
