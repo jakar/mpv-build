@@ -25,6 +25,7 @@ case "$PKG_CONFIG_PATH" in
     ;;
 esac
 
+echo "Using PKG_CONFIG_PATH=\"$PKG_CONFIG_PATH\""
 echo Using mpv options: $OPTIONS "$@"
 
 cd "$BUILD"/mpv
