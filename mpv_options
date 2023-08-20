@@ -1,6 +1,6 @@
---prefix=/usr/local/stow/mpv
+-Dprefix=/usr/local/stow/mpv
+-Dbuildtype=release
+-Ddebug=false
 
---enable-dvdnav
---enable-cdda
---enable-libarchive
-
+-Dcdda=enabled
+-Ddvdnav=enabled
