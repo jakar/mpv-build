@@ -62,4 +62,3 @@
 --enable-libdavs2
 --enable-libharfbuzz
 --enable-libsrt
---enable-vulkan
